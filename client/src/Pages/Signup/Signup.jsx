@@ -24,8 +24,9 @@ const Signup = () => {
     })
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
 
     if (formdata.name == "" || formdata.username == "" || formdata.email == "" || formdata.password == "") {
       toast.error("Please fill the details");
@@ -34,7 +35,32 @@ const Signup = () => {
       toast.error("Please enter a valid email address");
       return false;
     } else {
-      toast.success("Form Submit")
+      try {
+        const response = await fetch("http://localhost:4000/api/auth/signup", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(formdata),
+            credentials: "include",
+        });
+    
+        const data = await response.json(); // Always parse response JSON first
+    
+        if (!response.ok) {
+            toast.error(data.message || "Error occurred");
+            console.error("Error:", data);
+            throw new Error(data.message || `Something went wrong ${response.status}`);
+        }
+    
+        console.log(data.message);
+        toast.success("Signup successful");
+    
+    } catch (error) {
+        console.error("Unexpected Error:", error);
+        // toast.error(error.message || "Something went wrong!");
+    }
+    
     }
 
   }

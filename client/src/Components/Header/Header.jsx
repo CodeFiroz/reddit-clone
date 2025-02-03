@@ -1,4 +1,4 @@
-
+import {Link} from "react-router-dom";
 
 const Header = () => {
   return (
@@ -12,9 +12,9 @@ const Header = () => {
       <span className="ml-3 text-xl">Tailblocks</span>
     </a>
     <nav className="md:ml-auto md:mr-auto flex flex-wrap items-center text-base justify-center">
-      <a className="mr-5 hover:text-gray-900" href="#">HOMEPAGE</a>
-      <a className="mr-5 hover:text-gray-900" href="#">CREATE NEW POST</a>
-      <a className="mr-5 hover:text-gray-900" href="#">MY PROFILE</a>
+      <Link className="mr-5 hover:text-gray-900" to="/">HOMEPAGE</Link>
+      <Link className="mr-5 hover:text-gray-900" to="/new">CREATE NEW POST</Link>
+      <Link className="mr-5 hover:text-gray-900" to="/profile">MY PROFILE</Link>
     </nav>
     <button className="inline-flex items-center bg-gray-100 border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0"> Logout
       <svg fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" className="w-4 h-4 ml-1" viewBox="0 0 24 24">
