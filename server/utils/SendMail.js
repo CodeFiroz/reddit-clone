@@ -9,9 +9,9 @@ const transporter = nodemailer.createTransport({
   });
 
 
-export const sendResetEmail = (resetToken, email)=>{
+export const sendResetEmail = (resetToken, email, res)=>{
    try{
-    const resetLink = `http://localhost:3000/reset-password/${resetToken}`;
+    const resetLink = `http://localhost:${process.env.PORT}/reset-password/${resetToken}`;
     const mailOptions = {
       from: process.env.EMAIL,
       to: email,
@@ -22,8 +22,11 @@ export const sendResetEmail = (resetToken, email)=>{
     };
 
     transporter.sendMail(mailOptions, (error) => {
-        if (error) return res.status(500).json({ message: "Email not sent" });
-        res.json({ message: "Reset email sent" });
+        if (error){
+          return false;
+          console.log("Email not send")
+        } 
+        console.log("Email send ✅")
       });
 
    }catch(error){
