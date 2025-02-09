@@ -1,21 +1,13 @@
-import { Link, useNavigate } from "react-router-dom"
+import { Link } from "react-router-dom"
 import { useState } from "react"
 import toast, { Toaster } from 'react-hot-toast';
-import { useDispatch, useSelector } from "react-redux";
-import { login } from "../../store/authSlice";
-import store from "../../store/authStore";
-
+import { useAuthStore } from "../../store/authStore";
 
 const Signin = () => {
 
-  const {isAuthenticated, user} = useSelector((state)=> state.auth);
 
-  console.log("isAuthenticated  :: " + isAuthenticated)
-  console.log("Store User :: " + user)
+  const {login, authUser} = useAuthStore();
 
-  const navigate = useNavigate();
-
-  const dispatch = useDispatch();
 
   const [passType, setPasswordType] = useState("password");
 
@@ -57,20 +49,21 @@ const Signin = () => {
         if (data?.user) {
             toast.success("Login successful");
             console.log("User data received:", data.user);
-            console.log("Before Dispatch:", data.user);
-            dispatch(login(data.user));
-            console.log("After Dispatch:", store.getState().auth); // Check if state updates
-    
-            dispatch(login(data.user)); // ✅ Update Redux state
-    
+
+            login(data.user);
+
+            console.log("Zustand User :: " + authUser)
+            
             // setTimeout(() => {
             //     navigate("/"); // ✅ Avoid full page reload
             // }, 2000);
+
         } else {
             console.error("User data is missing in response:", data);
         }
     } catch (error) {
         console.error("Unexpected Error:", error);
+        toast.error("Internal Server Error");
     }
     
     }

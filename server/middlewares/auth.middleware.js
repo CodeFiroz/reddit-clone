@@ -1,4 +1,4 @@
-import User from "../models/user.models";
+import User from "../models/user.models.js";
 import jwt from "jsonwebtoken";
 
 export const protectRoute = async(req, res, next) => {
@@ -11,13 +11,13 @@ export const protectRoute = async(req, res, next) => {
             return res.status(401).json({ success: false, message: "Unauthorized - Invaild Token"})
         }
 
-        const decoded = jwt.verify(token, process.env.JWT_SECRET, (err)=>{
-            return res.status(401).json({ success: false, message: "Unauthorized - Invaild Token"})
-        })
-
-        if(!decoded){
-            return res.status(401).json({ success: false, message: "Unauthorized - Invaild Token"})
+        let decoded;
+        try {
+            decoded = jwt.verify(token, process.env.JWT_SECRET);
+        } catch (err) {
+            return res.status(401).json({ success: false, message: "Unauthorized - Invalid Token" });
         }
+
 
         const user = await User.findById(decoded.userid).select("-password");
 

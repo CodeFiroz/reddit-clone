@@ -73,7 +73,14 @@ export const signin = async (req, res) => {
 
         genrateToken(user._id, res);
 
-        return res.status(200).json({ success: true, message: `successfully sign in` });
+        const senduser = {
+            id: user._id,
+            name: user.name,
+            username: user.username,
+            email: user.email,
+        }
+
+        return res.status(200).json({ success: true, message: `successfully sign in`,user: senduser });
 
 
     } catch (err) {
@@ -163,6 +170,7 @@ export const resetPassword = async (req, res) => {
 
 export const checkAuth = async(req, res)=>{
     try{
+        console.log(req.user);
         return res.status(200).json(req.user);
 
     }catch(err){

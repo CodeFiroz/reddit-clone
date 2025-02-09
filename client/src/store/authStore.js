@@ -1,26 +1,58 @@
-import { configureStore } from "@reduxjs/toolkit";
-import authReducer from './authSlice';
-import storage from "redux-persist/lib/storage";
-import { persistStore, persistReducer } from "redux-persist";
-import { combineReducers } from "redux";
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
-const persistConfig = {
-    key: "root",
-    storage, // Store in localStorage
-};
+export const useAuthStore = create(
+  persist(
+    (set) => ({
+      authUser: null,
+      isAuthenticate: false,
+      loading: true,
 
-const rootReducer = combineReducers({
-    auth: authReducer, // ✅ Add persistable reducers
-});
+      checkAuth: async () => {
+        set({ loading: true }); // Start loading before API call
 
-const persistedReducer = persistReducer(persistConfig, rootReducer);
+        try {
+          const response = await fetch("http://localhost:4000/api/auth/check-auth", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+          });
 
+          const data = await response.json();
 
-export const store = configureStore({
-    reducer: {
-        auth: persistedReducer,
-    },
-})
+          if (!response.ok) {
+            throw new Error(data.message || "Authentication failed");
+          }
 
-export const persistor = persistStore(store); // ✅ Create persistor
-export default store;
+          console.log("User authenticated:", data);
+
+          set({
+            authUser: data,
+            isAuthenticate: true,
+            loading: false,
+          });
+
+        } catch (err) {
+          console.error("Auth Error:", err);
+          set({
+            authUser: null,
+            isAuthenticate: false,
+            loading: false,
+          });
+
+        }
+      },
+
+      login: (user) => set({ authUser: user, isAuthenticate: true, loading: false }),
+
+      logout: () => {
+        set({ authUser: null, isAuthenticate: false, loading: false });
+        localStorage.removeItem("auth-storage"); // Remove persisted storage
+      },
+    }),
+    {
+      name: "auth-storage", // ✅ LocalStorage key for persistence
+      getStorage: () => localStorage, // ✅ Ensures data is stored in localStorage
+    }
+  )
+);

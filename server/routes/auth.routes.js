@@ -1,5 +1,6 @@
 import express from "express";
-import { resetPassword, sendPasswordResetMail, signin, signup } from "../controllers/auth.controllers.js";
+import { checkAuth, resetPassword, sendPasswordResetMail, signin, signup } from "../controllers/auth.controllers.js";
+import { protectRoute } from "../middlewares/auth.middleware.js";
 
 const router = express.Router();
 
@@ -7,5 +8,6 @@ router.post('/signup', signup);
 router.post('/sign-in', signin);
 router.post('/forgot-password', sendPasswordResetMail);
 router.post('/reset-password/:token', resetPassword);
+router.post('/check-auth', protectRoute, checkAuth);
 
 export default router;

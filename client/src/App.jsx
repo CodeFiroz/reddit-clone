@@ -6,30 +6,25 @@ import Profile from "./Pages/Profile/Profile";
 import ResetPassword from "./Pages/ResetPassword/ResetPassword";
 import Signin from "./Pages/Signin/Signin";
 import Signup from "./Pages/Signup/Signup";
-import { useEffect } from "react";
-import { useDispatch } from "react-redux";
-import { login, logout } from "./store/authSlice.js";
-import {checkAuth} from "./store/authService.js";
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+
+import { useAuthStore } from "./store/authStore";
+import { useEffect } from "react";
 
 
 function App() {
 
-  const dispatch = useDispatch();
-  
-      useEffect(() => {
-          const fetchAuth = async () => {
-            const user = await checkAuth();
-            if (user) {
-              dispatch(login(user)); 
-            } else {
-              dispatch(logout());
-            }
-          };
-      
-          fetchAuth();
-        }, [dispatch]);
+  const {authUser, isAuthenticate, loading, checkAuth} = useAuthStore();
+
+  useEffect(()=>{
+
+    checkAuth();
+
+  }, [checkAuth]);
+
+  console.log(authUser);
+  console.log(isAuthenticate);
 
   return (
     <>
