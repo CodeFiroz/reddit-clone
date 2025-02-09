@@ -1,6 +1,13 @@
 import {Link} from "react-router-dom";
+import { useSelector } from "react-redux"
+
 
 const Header = () => {
+  
+  const {user} = useSelector((state) => state.auth);
+
+  console.log(user);
+
   return (
     <>
       <header className="text-gray-600 body-font">

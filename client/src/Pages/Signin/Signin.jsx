@@ -1,9 +1,21 @@
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { useState } from "react"
 import toast, { Toaster } from 'react-hot-toast';
+import { useDispatch, useSelector } from "react-redux";
+import { login } from "../../store/authSlice";
+import store from "../../store/authStore";
 
 
 const Signin = () => {
+
+  const {isAuthenticated, user} = useSelector((state)=> state.auth);
+
+  console.log("isAuthenticated  :: " + isAuthenticated)
+  console.log("Store User :: " + user)
+
+  const navigate = useNavigate();
+
+  const dispatch = useDispatch();
 
   const [passType, setPasswordType] = useState("password");
 
@@ -29,14 +41,12 @@ const Signin = () => {
       try {
         const response = await fetch("http://localhost:4000/api/auth/sign-in", {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify(formdata),
             credentials: "include",
         });
     
-        const data = await response.json(); // Always parse response JSON first
+        const data = await response.json();
     
         if (!response.ok) {
             toast.error(data.message || "Error occurred");
@@ -44,13 +54,25 @@ const Signin = () => {
             throw new Error(data.message || `Something went wrong ${response.status}`);
         }
     
-        console.log(data.message);
-        toast.success("Login successful");
+        if (data?.user) {
+            toast.success("Login successful");
+            console.log("User data received:", data.user);
+            console.log("Before Dispatch:", data.user);
+            dispatch(login(data.user));
+            console.log("After Dispatch:", store.getState().auth); // Check if state updates
     
+            dispatch(login(data.user)); // ✅ Update Redux state
+    
+            // setTimeout(() => {
+            //     navigate("/"); // ✅ Avoid full page reload
+            // }, 2000);
+        } else {
+            console.error("User data is missing in response:", data);
+        }
     } catch (error) {
         console.error("Unexpected Error:", error);
-        // toast.error(error.message || "Something went wrong!");
     }
+    
     }
 
   }
