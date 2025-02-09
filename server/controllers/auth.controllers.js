@@ -122,13 +122,17 @@ export const resetPassword = async (req, res) => {
     try {
 
         const { token } = req.params;
-        const { newPassword } = req.body;
+        const { password } = req.body;
 
-        if (!newPassword) {
+        if (!password) {
             return res.status(400).json({ success: false, message: "Invalid data" });
         }
 
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const decoded = jwt.verify(token, process.env.JWT_SECRET, (err)=>{
+            if(err){
+            return res.status(400).json({ success: false, message: `invalid or expired token` });
+            }
+        });
 
         if (!decoded) {
             return res.status(400).json({ success: false, message: `invalid or expired token` });
@@ -153,6 +157,16 @@ export const resetPassword = async (req, res) => {
 
     } catch (err) {
         console.warn(`Error in auth controller RESET PASSWORD :: ${err}`);
+        return res.status(500).json({ success: false, message: "Internal Server Error ❌", error: err })
+    }
+}
+
+export const checkAuth = async(req, res)=>{
+    try{
+        return res.status(200).json(req.user);
+
+    }catch(err){
+        console.warn(`Error in auth controller CheckAuth :: ${err}`);
         return res.status(500).json({ success: false, message: "Internal Server Error ❌", error: err })
     }
 }
