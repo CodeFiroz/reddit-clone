@@ -89,6 +89,18 @@ export const signin = async (req, res) => {
     }
 }
 
+export const logout = (req, res)=>{
+    try{
+        
+        res.clearCookie("jwt");
+        return res.status(200).json({ success: true, message: "successfully logout" });
+
+    }catch(err){
+        console.log(`Error in auth controller LOGOUT :: ${err}`);
+        return res.status(500).json({ success: false, message: "Internal Server Error ❌", error: err })        
+    }
+}
+
 export const sendPasswordResetMail = async (req, res) => {
     try {
 
@@ -168,11 +180,9 @@ export const resetPassword = async (req, res) => {
     }
 }
 
-export const checkAuth = async(req, res)=>{
+export const checkAuth = (req, res)=>{
     try{
-        console.log(req.user);
         return res.status(200).json(req.user);
-
     }catch(err){
         console.warn(`Error in auth controller CheckAuth :: ${err}`);
         return res.status(500).json({ success: false, message: "Internal Server Error ❌", error: err })

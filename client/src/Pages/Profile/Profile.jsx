@@ -1,6 +1,10 @@
 import Header from "../../Components/Header/Header";
+import { useAuthStore } from "../../store/authStore";
 
 const Profile = () => {
+
+  const {authUser} = useAuthStore();
+
   return (
     <>
     
@@ -20,8 +24,8 @@ const Profile = () => {
         </div>
 
         <div>
-          <div className="text-center font-bold text-indigo-500 md:text-lg">John Roberts</div>
-          <p className="mb-3 text-center text-sm text-gray-500 md:mb-4 md:text-base">Investor Relations</p>
+          <div className="text-center font-bold text-indigo-500 md:text-lg">{authUser.name}</div>
+          <p className="mb-3 text-center text-sm text-gray-500 md:mb-4 md:text-base">{authUser.email}</p>
 
           
           <div className="flex justify-center">

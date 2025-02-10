@@ -1,9 +1,22 @@
 import { Link } from "react-router-dom"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import toast, { Toaster } from 'react-hot-toast';
-
+import { useAuthStore } from "../../store/authStore";
+import { Navigate } from "react-router-dom";
 
 const Signup = () => {
+
+  const {isAuthenticate, checkAuth, login} = useAuthStore();
+
+  useEffect(()=>{
+  
+    checkAuth();
+
+  }, [checkAuth]);
+
+  if(isAuthenticate){
+    return <Navigate to="/" />;
+  }
 
   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
@@ -55,6 +68,11 @@ const Signup = () => {
     
         console.log(data.message);
         toast.success("Signup successful");
+        login(data.newUser);
+
+        setTimeout(()=>{
+          <Navigate to="/" />
+        }, 2000)
     
     } catch (error) {
         console.error("Unexpected Error:", error);

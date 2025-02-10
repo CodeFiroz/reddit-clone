@@ -1,12 +1,25 @@
 import { Link } from "react-router-dom"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import toast, { Toaster } from 'react-hot-toast';
 import { useAuthStore } from "../../store/authStore";
+import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const Signin = () => {
 
+  const navigate = useNavigate();
+  const {isAuthenticate, checkAuth, login} = useAuthStore();
 
-  const {login, authUser} = useAuthStore();
+  useEffect(()=>{
+  
+    checkAuth();
+
+  }, [checkAuth]);
+
+  if(isAuthenticate){
+    return <Navigate to="/" />;
+  }
+
 
 
   const [passType, setPasswordType] = useState("password");
@@ -51,13 +64,9 @@ const Signin = () => {
             console.log("User data received:", data.user);
 
             login(data.user);
-
-            console.log("Zustand User :: " + authUser)
             
-            // setTimeout(() => {
-            //     navigate("/"); // ✅ Avoid full page reload
-            // }, 2000);
-
+            navigate("/");
+            
         } else {
             console.error("User data is missing in response:", data);
         }

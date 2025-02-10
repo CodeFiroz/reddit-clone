@@ -24,8 +24,6 @@ export const useAuthStore = create(
             throw new Error(data.message || "Authentication failed");
           }
 
-          console.log("User authenticated:", data);
-
           set({
             authUser: data,
             isAuthenticate: true,
