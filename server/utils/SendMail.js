@@ -1,4 +1,8 @@
 import nodemailer from "nodemailer";
+import dotenv from "dotenv";
+
+
+dotenv.config(); 
 
 const transporter = nodemailer.createTransport({
     service: "gmail",
@@ -9,9 +13,9 @@ const transporter = nodemailer.createTransport({
   });
 
 
-export const sendResetEmail = (resetToken, email, res)=>{
+export const sendResetEmail = (resetToken, email)=>{
    try{
-    const resetLink = `http://localhost:${process.env.PORT}/reset-password/${resetToken}`;
+    const resetLink = `http://localhost:5173/reset-password/${resetToken}`;
     const mailOptions = {
       from: process.env.EMAIL,
       to: email,
@@ -23,8 +27,8 @@ export const sendResetEmail = (resetToken, email, res)=>{
 
     transporter.sendMail(mailOptions, (error) => {
         if (error){
+          console.log("Email not send :: " + error)
           return false;
-          console.log("Email not send")
         } 
         console.log("Email send ✅")
       });

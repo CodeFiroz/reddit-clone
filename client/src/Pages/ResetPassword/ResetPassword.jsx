@@ -6,6 +6,9 @@ const ResetPassword = () => {
 
   const {token} = useParams();
 
+  
+  
+
     const [passType, setPasswordType] = useState("password");
     const [password, setPassword] = useState("");
   

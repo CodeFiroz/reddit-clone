@@ -125,7 +125,14 @@ export const sendPasswordResetMail = async (req, res) => {
 
         await user.save();
 
-        sendResetEmail(resetToken, user.email);
+        try{
+            sendResetEmail(resetToken, user.email);
+            console.log("Mail sent ✅");
+            
+        }catch(Err){
+            console.log("can't send mail :: " + Err);
+            
+        }
 
         return res.status(200).json({ success: true, message: "Password reset email is send to registred email address", token: resetToken })
 
@@ -143,19 +150,19 @@ export const resetPassword = async (req, res) => {
         const { token } = req.params;
         const { password } = req.body;
 
+
         if (!password) {
             return res.status(400).json({ success: false, message: "Invalid data" });
         }
 
-        const decoded = jwt.verify(token, process.env.JWT_SECRET, (err)=>{
-            if(err){
-            return res.status(400).json({ success: false, message: `invalid or expired token` });
-            }
-        });
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
         if (!decoded) {
-            return res.status(400).json({ success: false, message: `invalid or expired token` });
+            return res.status(401).json({ success: false, message: "Unauthorized - Invalid Token" });
         }
+    
+
+        
 
         const user = await User.findOne({ _id: decoded.id, resetToken: token });
 
@@ -163,7 +170,7 @@ export const resetPassword = async (req, res) => {
             return res.status(400).json({ success: false, message: `invalid or expired token` });
         }
 
-        const hashPassword = await bcrypt.hash(newPassword, 10);
+        const hashPassword = await bcrypt.hash(password, 10);
 
         user.password = hashPassword;
         user.resetToken = null;
