@@ -39,3 +39,29 @@ export const getPosts = async (req, res)=>{
         return res.status(500).json({ success: false, message: "Internal Server Error ❌", error: err })
     }
 }
+
+export const deletePost = async (req, res)=>{
+    try{
+
+        const postId = req.params.id;
+        const user = req.user;
+
+        const post = await Post.findById(postId);
+
+        if(!post.userId == user._id){
+            return res.status(401).json({ success: false, message: "You don't have access to delete this post" })
+        }
+
+        const deletePost = await Post.findOneAndDelete({_id: post._id});
+
+        if(!deletePost){
+        return res.status(401).json({ success: false, message: "Can't delete post right now"})
+        }
+
+        return res.status(200).json({success: false, message: "Post deleted successfully", post: deletePost});
+        
+    }catch(err){
+        console.warn(`Error in post controller GETPOSTS :: ${err}`);
+        return res.status(500).json({ success: false, message: "Internal Server Error ❌", error: err })
+    }
+}
