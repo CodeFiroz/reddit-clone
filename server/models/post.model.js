@@ -33,6 +33,7 @@ const PostSchema = new mongoose.Schema(
         },
         pic: {
           type: String,
+          default: "",
         },
         createdAt: {
           type: Date,

@@ -31,11 +31,35 @@ export const newpost = async (req, res)=>{
 
 export const getPosts = async (req, res)=>{
     try{
-        const posts = await Post.find();
+        const posts = await Post.find().populate("userId", "name _id pic");
         return res.status(200).json({ success: true, message: "Posts fetched", posts });
 
     }catch(err){
         console.warn(`Error in post controller GETPOSTS :: ${err}`);
+        return res.status(500).json({ success: false, message: "Internal Server Error ❌", error: err });
+    }
+}
+
+export const getSinglePost = async (req, res)=>{
+    try{
+
+        const {postId} = req.params;
+
+        if(!postId){
+            return res.status(400).json({ success: false, message: "Invalid post id" });
+        }
+
+        const post = await Post.findById(postId).populate("userId", "name _id pic");
+
+        if(!post){
+            return res.status(400).json({ success: false, message: "Post not found !" });
+        }
+
+        return res.status(200).json({ success: true, post });
+
+
+    }catch(err){
+        console.warn(`Error in post controller GET SINGLE POST :: ${err}`);
         return res.status(500).json({ success: false, message: "Internal Server Error ❌", error: err })
     }
 }
@@ -62,6 +86,25 @@ export const deletePost = async (req, res)=>{
         
     }catch(err){
         console.warn(`Error in post controller GETPOSTS :: ${err}`);
+        return res.status(500).json({ success: false, message: "Internal Server Error ❌", error: err })
+    }
+}
+
+
+export const addComment = async(req, res)=>{
+    try{
+
+        const {user} = req.user;
+        const {text, postId} = req.body;
+
+        /*
+
+        TODO: all logic & functions
+        
+        */
+
+    }catch(err){
+        console.warn(`Error in post controller ADD COMMENT :: ${err}`);
         return res.status(500).json({ success: false, message: "Internal Server Error ❌", error: err })
     }
 }
